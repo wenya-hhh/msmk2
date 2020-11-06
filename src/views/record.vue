@@ -14,26 +14,46 @@
       <van-tab title="待上课">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
           <div class="zb_empty">
-            <img src="" alt="" />
+            <img
+              src="https://wap.365msmk.com/img/no-message.8d3ca5af.png"
+              alt=""
+            />
             <p>还没有待上课记录哦</p>
-            <van-button @click="$router.push('/oto')">立即约课</van-button>
+            <van-button v-if="token" @click="$router.push('/oto')"
+              >立即约课</van-button
+            >
+            <van-button v-if="!token" @click="$router.push('/login')"
+              >登陆/注册</van-button
+            >
           </div>
         </van-pull-refresh>
       </van-tab>
       <van-tab title="已上课">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
           <div class="zb_empty">
-            <img src="" alt="" />
+            <img
+              src="https://wap.365msmk.com/img/no-message.8d3ca5af.png"
+              alt=""
+            />
             <p>还没有上课记录哦</p>
-            <van-button @click="$router.push('/oto')">立即约课</van-button>
+            <van-button v-if="token" @click="$router.push('/oto')">立即约课</van-button>
+            <van-button v-if="!token" @click="$router.push('/login')"
+              >登陆/注册</van-button
+            >
           </div>
         </van-pull-refresh>
       </van-tab>
       <van-tab title="已取消">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
           <div class="zb_empty">
-            <img src="" alt="" />
+            <img
+              src="https://wap.365msmk.com/img/no-message.8d3ca5af.png"
+              alt=""
+            />
             <p>还没有取消上课记录哦</p>
+            <van-button v-if="!token" @click="$router.push('/login')"
+              >登陆/注册</van-button
+            >
           </div>
         </van-pull-refresh>
       </van-tab>
@@ -46,7 +66,6 @@
 
 <script>
 import appFooter from "../components/Footer";
-
 export default {
   // 组件名称
   name: "demo",
@@ -59,6 +78,7 @@ export default {
   // 组件状态值
   data() {
     return {
+      token:localStorage.getItem('token')||'',
       active: 3,
       isLoading: false,
     };
@@ -87,7 +107,8 @@ export default {
    * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
    */
   created() {},
-  mounted() {},
+  mounted() {
+  },
 };
 </script>
 

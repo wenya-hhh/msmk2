@@ -4,18 +4,19 @@
       <van-icon name="arrow-left" @click="$router.go(-1)" />
       <h3>预约课程</h3>
     </header>
-    <div class="zb_otItem" >
-      <van-image
-        round
-        width=".8rem"
-        height=".8rem"
-        :src="list.avatar"
-      />
+    <div class="zb_otItem">
+      <van-image round width=".8rem" height=".8rem" :src="list.avatar" />
       <div>
-        <p><span>{{list.real_name}}</span></p>
-        <p>男 30年教龄</p>
+        <p>
+          <span>{{ list.teacher_name }}</span>
+        </p>
+        <p class="sex">
+          {{ list.sex == 0 ? "男" : "女" }} {{ list.teach_age }}年教龄
+        </p>
       </div>
-      <div class="yuyue" @click="$router.push('/teacher?id+${list.id}')">查看详情</div>
+      <div class="yuyue" @click="$router.push(`/teacher?id=${list.id}`)">
+        查看详情
+      </div>
     </div>
     <div class="zb_optitle">
       <span></span>
@@ -31,7 +32,7 @@
 </template>
 
 <script>
-import {getTea} from '../util/api'
+import { getTea } from "../util/api";
 export default {
   // 组件名称
   name: "demo",
@@ -42,7 +43,7 @@ export default {
   // 组件状态值
   data() {
     return {
-      list:{},
+      list: {},
     };
   },
   // 计算属性
@@ -51,9 +52,9 @@ export default {
   watch: {},
   // 组件方法
   methods: {
-    yuyue(){
-      this.$$toast('请选择预约时间')
-    }
+    yuyue() {
+      this.$toast("请选择预约时间");
+    },
   },
   // 以下是生命周期钩子   注：没用到的钩子请自行删除
   /**
@@ -120,6 +121,9 @@ header {
         font-size: 0.33rem;
         color: #595959;
       }
+    }
+    .sex {
+      font-size: 3.2vw;
     }
   }
   .yuyue {

@@ -8,20 +8,8 @@
         /></van-swipe-item>
       </van-swipe>
     </div>
-
     <!-- 遮罩层 -->
-    <van-overlay :show="show">
-      <div class="wrapper">
-        <div class="block">
-          <img src="https://wap.365msmk.com/img/feiji.decaf161.png" alt="" />
-          <p class="zqd_p1">赶紧登陆一下吧</p>
-          <p class="zqd_p2">立即预约一对一辅导，浏览更多视频教程</p>
-          <button @click="$router.push('/login')">立即登录</button>
-          <van-icon name="cross" @click="show = false" />
-        </div>
-      </div>
-    </van-overlay>
-
+    <app-liji :show="show" @s="s"></app-liji>
     <!-- 特色课布局 -->
     <div class="cxy_kinds">
       <ul>
@@ -39,7 +27,9 @@
           />
           <span>一对一辅导</span>
         </li>
-        <li @click="$router.push('/study-calendar')">
+        <li
+          @click="zqd_token ? $router.push('/study-calendar') : (show = true)"
+        >
           <img
             src="data:image/png;base64,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"
             alt=""
@@ -48,149 +38,117 @@
         </li>
       </ul>
     </div>
-    <!-- 名师阵容 -->
-    <p class="cxy_page"><span></span>名师阵容</p>
-    <div class="cxy_content">
-      <ul class="cxy_item">
-        <li
-          v-for="(item, index) in HomeArr5.list"
-          @click="sh(item.teacher_id)"
-          :key="index"
-        >
-          <div>
-            <img :src="item.teacher_avatar" alt="" />
+    <div class="content">
+      <div v-for="(item, index) in list" :key="index">
+        <template v-if="item.channel_info.type == 3">
+          <!-- 名师阵容 -->
+          <p class="cxy_page"><span></span>{{ item.channel_info.name }}</p>
+          <div class="cxy_content">
+            <ul class="cxy_item">
+              <li
+                v-for="(item, index) in item.list"
+                @click="sh(item.teacher_id)"
+                :key="index.teacher_id"
+              >
+                <div>
+                  <img :src="item.teacher_avatar" alt="" />
+                </div>
+                <div class="cxy_txt">
+                  <p>{{ item.teacher_name }}</p>
+                  <p>
+                    　杨老师,特级教师.多次被中国数学会评为全国高中数学竞联赛优秀教练员。长期从事名校理科班的数学教学和数学竞赛辅导工作。
+                    辅导学生参加全国高中数学联赛有数百人次获全国高中数学联赛一、二、三等奖，数十人被免试保送到清华大学、北京大学等名牌大学学习。十多人获CMO获一、二、三等奖，一人获IMO金牌。
+                    特别是近年来大学试行自主招生，有很多同学通过上他的竞赛辅导课进入清华大学、北京大学、上海交通大学等。
+                  </p>
+                </div>
+              </li>
+            </ul>
           </div>
-          <div class="cxy_txt">
-            <p>{{ item.teacher_name }}</p>
-            <p>
-              　杨老师,特级教师.多次被中国数学会评为全国高中数学竞联赛优秀教练员。长期从事名校理科班的数学教学和数学竞赛辅导工作。
-              辅导学生参加全国高中数学联赛有数百人次获全国高中数学联赛一、二、三等奖，数十人被免试保送到清华大学、北京大学等名牌大学学习。十多人获CMO获一、二、三等奖，一人获IMO金牌。
-              特别是近年来大学试行自主招生，有很多同学通过上他的竞赛辅导课进入清华大学、北京大学、上海交通大学等。
-            </p>
+        </template>
+        <template v-if="item.channel_info.type == 1">
+          <!-- 精品课程 -->
+          <p class="cxy_page"><span></span>{{ item.channel_info.name }}</p>
+          <div class="cxy_jingpin">
+            <ul class="cxy_item">
+              <li
+                v-for="(item, index) in item.list"
+                :key="index"
+                @click="
+                  $router.push(`course-detail?id=${item.id}&courseType=5`)
+                "
+              >
+                <div class="cxy_pos">
+                  <img
+                    src="https://wap.365msmk.com/img/has-buy.6cfbd83d.png"
+                    alt=""
+                    v-show="item.has_buy"
+                  />
+                </div>
+                <p class="one">{{ item.title }}</p>
+                <div class="two">1课时</div>
+                <div class="three">
+                  <img :src="item.teachers_list[0].teacher_avatar" alt="" />
+                  <span>{{ item.teachers_list[0].teacher_name }}</span>
+                </div>
+                <div class="four">
+                  <span>{{ item.sales_num }}人报名</span>
+                  <span class="free" v-show="item.price == 0">免费</span>
+                  <span v-show="item.price == 100"
+                    ><img
+                      src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/20191HHDExgz0u1567065946.png"
+                      alt=""
+                    />
+                    1.00</span
+                  >
+                </div>
+              </li>
+            </ul>
           </div>
-        </li>
-      </ul>
-    </div>
-    <!-- 精品课程 -->
-    <p class="cxy_page"><span></span>精品课程</p>
-    <div class="cxy_jingpin">
-      <ul class="cxy_item">
-        <li v-for="(item, index) in HomeArr2.list" :key="index" @click="$router.push(`course-detail?id=${item.teacher_id}&courseType=5`)">
-          <div class="cxy_pos">
-            <img
-              src="https://wap.365msmk.com/img/has-buy.6cfbd83d.png"
-              alt=""
-            />
-          </div>
-          <p class="one">{{ item.title }}</p>
-          <div class="two">1课时</div>
-          <div class="three">
-            <img :src="item.teachers_list[0].teacher_avatar" alt="" />
-            <span>{{ item.teachers_list[0].teacher_name }}</span>
-          </div>
-          <div class="four">
-            <span>{{ item.sales_num }}人报名</span>
-            <span class="free" v-show="item.price == 0">免费</span>
-            <span v-show="item.price == 100"
-              ><img
-                src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/20191HHDExgz0u1567065946.png"
-                alt=""
-              />
-              1.00</span
-            >
-          </div>
-        </li>
-      </ul>
-    </div>
-    <!-- 明星讲师 -->
-    <!-- 推荐课程 -->
-    <p class="cxy_page"><span></span>推荐课程</p>
-    <div class="cxy_jingpin">
-      <ul class="cxy_item">
-        <li v-for="(item, index) in HomeArr4.list" :key="index">
-          <div class="cxy_pos">
-            <img
-              src="https://wap.365msmk.com/img/has-buy.6cfbd83d.png"
-              alt=""
-            />
-          </div>
-          <p class="one">{{ item.description }}</p>
-          <div class="two">1课时</div>
-          <div class="three">
-            <img :src="item.cover_img" alt="" />
-            <span>杨德胜</span>
-          </div>
-          <div class="four">
-            <span>{{ item.sales_num }}人报名</span>
-            <span class="free" v-show="item.price == 0">免费</span>
-            <span v-show="item.price == 100">
-              <img
-                src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/20191HHDExgz0u1567065946.png"
-                alt=""
-              />
-              1.00</span
-            >
-          </div>
-        </li>
-      </ul>
-    </div>
-    <!-- 明星讲师 -->
-    <p class="cxy_page"><span></span>明星讲师</p>
-    <div class="start">
-      <ul>
-        <li v-for="(item, index) in HomeArr1.list" :key="index">
-          <div>
-            <img :src="item.teacher_avatar" alt="" />
-          </div>
-          <div class="cxy_txt">
-            <p>{{ item.teacher_name }}</p>
-            <p>
-              {{ item.introduction }}
-            </p>
-          </div>
-        </li>
-      </ul>
+        </template>
+      </div>
     </div>
     <app-footer></app-footer>
   </div>
 </template>
 
 <script>
+import appLiji from "../components/Liji";
 import appFooter from "../components/Footer";
 import { gets, posts, getBanner } from "../util/api";
 export default {
-  components: { appFooter },
+  components: { appFooter, appLiji },
   data() {
     return {
-      HomeArr1: [],
-      HomeArr2: [],
-      HomeArr4: [],
-      HomeArr5: [],
+      // item: [],
+      // HomeArr2: [],
+      // HomeArr4: [],
+      // HomeArr5: [],
       list: [],
       show: false,
       banner: [],
+      zqd_token: localStorage.getItem("token"),
     };
   },
   created() {},
   mounted() {
     this.getList();
   },
+
   methods: {
+    s(val) {
+      this.show = val;
+    },
     async getList() {
       // 内容数据
       let { data } = await gets("recommend/appIndex");
-      this.HomeArr1 = data.data[0];
-      this.HomeArr2 = data.data[1];
-      this.HomeArr4 = data.data[3];
-      this.HomeArr5 = data.data[4];
-      console.log(data);
+      this.list = data.data;
+      console.log(this.list);
       // banner数据
       let { data: res } = await getBanner();
       this.banner = res.data;
     },
     sh(id) {
-      let zqd_token = localStorage.getItem("token");
-      if (zqd_token) {
+      if (this.zqd_token) {
         this.$router.push(`/teacher?id=${id}`);
       } else {
         this.show = true;
@@ -417,66 +375,6 @@ export default {
     width: 0.8rem;
     height: 0.8rem;
     border-radius: 50%;
-  }
-}
-.wrapper {
-  height: 6.7rem;
-  background: #fff;
-  border-radius: 0.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  // text-align: center;
-  position: fixed;
-  top: 45%;
-  left: 50%;
-  width: 75%;
-  overflow: hidden;
-  font-size: 0.21333rem;
-  transform: translate3d(-50%, -50%, 0);
-  backface-visibility: hidden;
-  transition: 0.3s;
-}
-
-.block {
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 0.2rem 0;
-  position: relative;
-  > img {
-    width: 100%;
-  }
-  > .zqd_p1 {
-    font-size: 0.3rem;
-  }
-  > .zqd_p2 {
-    font-size: 0.14rem;
-    color: rgb(153, 153, 153);
-  }
-  > button {
-    width: 4.7rem;
-    height: 0.8rem;
-    background: #eb6100;
-    color: #fff;
-    border: 0;
-    border-radius: 0.5rem;
-    margin-top: 0.45rem;
-    font-size: 0.3rem;
-  }
-  .van-icon {
-    width: 0.32rem;
-    height: 0.32rem;
-    position: absolute;
-    top: 0.30667rem;
-    right: 0.34667rem;
-    background-size: 100%;
-    background-position: 50%;
-    font-size: 0.16rem;
   }
 }
 </style>

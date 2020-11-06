@@ -32,11 +32,25 @@ import {
     CheckboxGroup,
     Pagination,
     CountDown,
-    Toast , 
+    Toast,
+    RadioGroup,
+    Radio,
+    Col,
+    Row,
+    DatetimePicker,
+    Area,
+    Rate 
 } from 'vant';
 
 import 'vant/lib/index.css';
 
+Vue.use(Rate );
+Vue.use(DatetimePicker);
+Vue.use(Area);
+Vue.use(Radio);
+Vue.use(Col);
+Vue.use(Row);
+Vue.use(RadioGroup)
 Vue.use(SidebarItem);
 Vue.use(Swipe);
 Vue.use(Sidebar);
@@ -69,7 +83,3 @@ Vue.use(CheckboxGroup);
 Vue.use(Field);
 Vue.use(CountDown);
 Vue.use(Toast);
-
-
-
-

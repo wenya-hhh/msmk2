@@ -1,113 +1,116 @@
 <template>
-  <div>
-    <!-- 课程通知 -->
-    <div class="zqd_div1" v-if="message == 'coures'">
-      <!-- 表头 -->
-      <van-nav-bar title="课程通知" left-text="" left-arrow @click-left="zqd_go()">
-        <template #right>
-          <!-- <span class="zqd_sp1">学习卡兑换</span> -->
-        </template>
-      </van-nav-bar>
-      <ul class="zqd_ul">
-        <li>
-          <p class="zqd_p1">7月20号 13:55</p>
-          <p class="zqd_p2">您报名的课程《李老师18号20号地理大课堂开课啦》已经有3天没有学习了，快去学习吧</p>
+  <div class="msg">
+    <app-header>
+      <template>
+        <div slot="title">{{title}}</div>
+        <div slot="right"></div>
+      </template>
+    </app-header>
+    <div class="jh_messageDetail_cont">
+      <ul>
+        <li v-for="(value,index) in list" :key="index">
+          <p>{{value.created_at*1000 | timeA}}</p>
+          <p>
+            {{value.content}}
+            <router-link
+              :to="{path:'/orderDetail',query:{order_id:value.order_id}}"
+              tag="span"
+              v-if="value.link_type===1"
+            >点击支付>></router-link>
+          </p>
         </li>
       </ul>
+      <p>没有更多了</p>
     </div>
-
-    <!-- 系统通知 -->
-    <div class="zqd_div1" v-if="message == 'system'">
-      <!-- 表头 -->
-      <van-nav-bar title="系统通知" left-text="" left-arrow @click-left="zqd_go()">
-        <template #right>
-          <!-- <span class="zqd_sp1">学习卡兑换</span> -->
-        </template>
-      </van-nav-bar>
-      暂无
-    </div>
-
-    <!-- 订单通知 -->
-    <div class="zqd_div1" v-if="message == 'order'">
-      <!-- 表头 -->
-      <van-nav-bar title="订单通知" left-text="" left-arrow @click-left="zqd_go()">
-        <template #right>
-          <!-- <span class="zqd_sp1">学习卡兑换</span> -->
-        </template>
-      </van-nav-bar>
-      <ul class="zqd_ul">
-        <li>
-          <p class="zqd_p1">7月20号 13:55</p>
-          <p class="zqd_p2">您的订单取消成功</p>
-        </li>
-      </ul>
-    </div>
-
-    <!-- 约课通知 -->
-    <div class="zqd_div1" v-if="message == 'oto'">
-      <!-- 表头 -->
-      <van-nav-bar title="约课通知" left-text="" left-arrow @click-left="zqd_go()">
-        <template #right>
-          <!-- <span class="zqd_sp1">学习卡兑换</span> -->
-        </template>
-      </van-nav-bar>
-      暂无
-    </div>
-
-    <!-- 考试通知 -->
-    <div class="zqd_div1" v-if="message == 'exam'">
-      <!-- 表头 -->
-      <van-nav-bar title="考试通知" left-text="" left-arrow @click-left="zqd_go()">
-        <template #right>
-          <!-- <span class="zqd_sp1">学习卡兑换</span> -->
-        </template>
-      </van-nav-bar>
-      暂无
-    </div>
-
   </div>
 </template>
-
 <script>
+import appHeader from "../components/AppHeader";
+import { msgDetailAjax } from "../util/api";
 export default {
+  components: {
+    appHeader
+  },
   data() {
     return {
-      message: '',
+      title: "",
+      message_classify: "",
+      limit: 10,
+      page: 1,
+      list: []
     };
   },
-  created() {},
+  created() {
+    this.title = this.$route.query.title;
+    this.message_classify = this.$route.query.message_classify;
+  },
   mounted() {
-    console.log(this.$route.query.zqd);
-    this.message = this.$route.query.zqd;
+    this.getMessage();
   },
   methods: {
-    zqd_go() {
-      this.$router.go(-1);
-    },
-  },
+    async getMessage() {
+      let obj = {
+        message_classify: this.message_classify,
+        limit: this.limit,
+        page: this.page
+      };
+      let { data } = await msgDetailAjax(obj);
+      console.log(data);
+      this.list = data.data.list;
+    }
+  }
 };
 </script>
 
-<style scoped lang="scss">
-.zqd_ul {
-  padding: 0 0.2rem;
-  > li {
-    // text-align: center;
-    display: flex;
-    flex-direction: column;
-    // justify-content: center;
-    align-items: center;
-    margin-top: 0.2rem;
-    > .zqd_p1 {
-      width: 1.83rem;
-      height: 0.45rem;
-      line-height: 0.45rem;
-      text-align: center;
-      background: #b7b7b7;
-      color: #fff;
-    }
-    > .zqd_p2 {
-      color: #8c8c8c;
+<style scoped lang='scss'>
+.msg {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: #fff;
+}
+.jh_messageDetail_cont {
+  padding: 0 2.66667vw;
+  box-sizing: border-box;
+  width: 100%;
+  > p {
+    font-size: 3.2vw;
+    line-height: 6.66667vw;
+    text-align: center;
+    color: #969799;
+  }
+  ul {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 2.66667vw;
+    background-color: #fff;
+    li {
+      width: 100%;
+      padding: 4vw 0;
+      border-bottom: 1px solid #f5f5f5;
+      background-color: #fff;
+      p {
+        font-size: 3.46667vw;
+        color: #8c8c8c;
+        line-height: 4.8vw;
+        padding: 0 2.66667vw;
+        margin-top: 4vw;
+        span {
+          color: #eb6100;
+        }
+      }
+      p:nth-of-type(1) {
+        width: 23.2vw;
+        height: 6.4vw;
+        background: #b7b7b7;
+        border-radius: 0.53333vw;
+        font-size: 2.93333vw;
+        color: #fff;
+        line-height: 6.4vw;
+        padding: 0 1.33333vw;
+        text-align: center;
+        margin: 0 auto;
+      }
     }
   }
 }

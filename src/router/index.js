@@ -40,6 +40,15 @@ const routes = [
       title: '设置密码'
     }
   },
+  // 修改个人信息
+  {
+    path: '/set-info',
+    name: 'set-info',
+    component: () => import('../components/set-info.vue'),
+    meta: {
+      title: '修改个人信息'
+    }
+  },
   // 设置信息
   {
     path: '/set-message',
@@ -57,7 +66,7 @@ const routes = [
     meta: {
       title: '每时每课',
       active: 0,
-    }
+    },
   },
   // 课程
   {

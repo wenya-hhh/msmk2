@@ -1,118 +1,155 @@
 <template>
   <div>
-    <!-- 表头 -->
-    <van-nav-bar title="信息通知" left-text="" left-arrow @click-left="zqd_go()">
-      <template #right>
-        <!-- <span class="zqd_sp1">学习卡兑换</span> -->
+    <!-- 头部组件 -->
+    <app-header>
+      <template>
+        <div slot="title">消息通知</div>
+        <div slot="right"></div>
       </template>
-    </van-nav-bar>
-
-    <!-- 信息下面的布局 -->
-    <ul class="zqd_ul">
-        <li v-for="(item,index) in zqd_arr" :key="index" @click="zqd_xiang(item.message_classify)">
-            <p>
-                <!-- <van-icon name="credit-pay"  color="#2AC8B7" size="0.88rem" id="zqd"/> -->
-                <van-icon :name="item.name" color="#2AC8B7" size="0.88rem" id="zqd"/>
-            </p>
-            <div>
-                <span>{{ item.kecheng }}</span>
-                <p>{{ item.title }}</p>
-            </div>
-        </li>
+    </app-header>
+    <!-- 课程通知 -->
+    <ul>
+      <li v-for="(item,index) in list" :key="index" @click="detail(item.message_classify,item.title)">
+        <div class="icon">
+          <img :src="item.url" />
+        </div>
+        <div class="info">
+          <span>{{ item.title }}</span>
+          <p class="content">{{ item.content==''?'暂无消息':item.content }}</p>
+        </div>
+      </li>
     </ul>
-
-
-
   </div>
 </template>
 
+
 <script>
+import appHeader from "../components/AppHeader.vue";
+import { messageAjax, msgDetailAjax } from "../util/api";
 export default {
+  // 组件名称
+  name: "",
+  // 组件参数 接收来自父组件的数据
+  props: [],
+  // 局部注册的组件
+  components: {
+       appHeader
+   },
+  // 组件状态值
   data() {
     return {
-        zqd_arr:[
-            {
-                name:'credit-pay',
-                kecheng:'课程通知',
-                title:'您报名的课程《李老师18号20号地理大课堂开课啦》已经有3天没有学习了，快去学习吧',
-                message_classify:'coures'
-            },
-            {
-                name:'credit-pay',
-                kecheng:'系统通知',
-                title:'暂无消息',
-                message_classify:'system'
-
-            },
-            {
-                name:'credit-pay',
-                kecheng:'订单通知',
-                title:'您的课程订单《》取消成功',
-                message_classify:'order'
-
-            },
-            {
-                name:'credit-pay',
-                kecheng:'约课通知',
-                title:'暂无消息',
-                message_classify:'oto'
-
-            },
-            {
-                name:'credit-pay',
-                kecheng:'考试通知',
-                title:'暂无消息',
-                message_classify:'exam'
-
-            },
-        ]
+      messageList: [],
+      list: [
+        {
+          title: "课程通知",
+          url: "https://wap.365msmk.com/img/icon-msg-course.d8a2c8d5.png",
+          message_classify: "course",
+          content: ""
+        },
+        {
+          title: "系统通知",
+          url: "https://wap.365msmk.com/img/icon-msg-system.db56e51b.png",
+          message_classify: "system",
+          content: ""
+        },
+        {
+          title: "订单通知",
+          url: "https://wap.365msmk.com/img/icon-msg-order.41755990.png",
+          message_classify: "order",
+          content: ""
+        },
+        {
+          title: "约课通知",
+          url: "https://wap.365msmk.com/img/icon-msg-oto.d8a2c8d5.png",
+          message_classify: "oto",
+          content: ""
+        },
+        {
+          title: "考试通知",
+          url: "https://wap.365msmk.com/img/icon-msg-exam.8a210fd7.png",
+          message_classify: "exam",
+          content: ""
+        }
+      ]
     };
   },
-  created() {
-
-  },
-  mounted() {},
+  // 计算属性
+  computed: {},
+  // 侦听器
+  watch: {},
+  // 组件方法
   methods: {
-    zqd_go() {
-      this.$router.go(-1);
+    async msg() {
+      let { data } = await messageAjax();
+    //   console.log(data);
+      this.messageList = data.data;
+      this.list.forEach(item => {
+        this.messageList.forEach(value => {
+          if (item.message_classify === value.message_classify) {
+            item.content = value.content;
+          }
+        });
+      });
+      console.log(this.list);
     },
-    zqd_xiang(zqd){
-        // console.log(zqd)
-        this.$router.push({
-            path:'/message-detail',
-            query:{
-                zqd
-            }
-        })
+    detail(message_classify,title){
+      this.$router.push({
+        path:'/message-detail',
+        query:{
+          message_classify,
+          title
+        }
+      })
     }
   },
+  /**
+   * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
+   */
+  created() {},
+  mounted() {
+    this.msg();
+  }
 };
-</script>
+</script> 
+
 
 <style scoped lang="scss">
-
-.zqd_ul{
-    box-sizing: border-box;
-    padding: 0.15rem 0.2rem;
-    >li{
-        display: flex;
-        border-bottom: 1px solid #efefef;
-        margin-top: 0.15rem;
-        >div{
-            margin-left: 0.2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            >span{
-                font-size: 0.2rem;
-            }
-            >p{
-                font-size: 0.25rem;
-                color: #595959;
-            }
-        }
-
-
-    }
+ul {
+  margin-top: 0;
+  border-top: 0.2vw solid #f5f5f5;
+  background: #fff;
+  padding: 1.33333vw 4vw;
+  //   margin: 2.66667vw 0;
+}
+li {
+  height: auto;
+  line-height: normal;
+  display: flex;
+  color: #595959;
+  border-bottom: 0.01vw solid #f5f5f5;
+}
+.icon {
+  padding: 2.6vw 0;
+  margin-right: 4vw;
+}
+.icon img {
+  width: 11.73333vw;
+  height: 11.73333vw;
+  border-radius: 50%;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  color: #595959;
+  padding: 0.2rem 0;
+  padding: 2vw 0;
+  position: relative;
+}
+span {
+  font-size: 4vw;
+  margin-bottom: 2.6vw;
+}
+p {
+  font-size: 3.4vw;
 }
 </style>

@@ -6,29 +6,49 @@
       <div class="tad-sou" v-show="fll">
         <van-icon name="arrow-left" @click="fan" size="0.4rem" />
         <span>课程详情</span>
-        <van-icon name="cluster-o" size="0.4rem" />
+        <van-icon name="cluster-o" size="0.4rem" @click="show = true" />
       </div>
 
       <div class="tad-sou" v-show="flog">
         <van-icon name="arrow-left" @click="fan" size="0.4rem" />
 
-        <a class="san" @click="jie" href="/Course-detail#box1">课程介绍</a>
-        <span class="san" @click="da">课程大纲</span>
-        <span class="san" @click="ping">课程评价</span>
-        <van-icon name="cluster-o" size="0.4rem" />
+        <a
+          class="san"
+          @click="jie"
+          :style="top <= 366 ? 'fontSize:.32rem;color:#333' : ''"
+          >课程介绍</a
+        >
+        <span
+          class="san"
+          @click="da"
+          :style="top >= 366 && top < 668 ? 'fontSize:.32rem;color:#333' : ''"
+          >课程大纲</span
+        >
+        <span
+          class="san"
+          @click="ping"
+          :style="top >= 668 ? 'fontSize:.32rem;color:#333' : ''"
+          >课程评价</span
+        >
+        <van-icon name="cluster-o" size="0.4rem" @click="show = true" />
       </div>
     </van-sticky>
 
     <div class="tad-box">
       <!-- 内容 -->
       <div class="tad-dan">
-        <van-icon name="star-o" size="0.4rem" @click="xing" v-show="foo" />
+        <van-icon
+          name="star-o"
+          size="0.4rem"
+          @click="xing"
+          v-show="list1.is_collect == 0"
+        />
         <van-icon
           name="star"
           size="0.4rem"
           color="#EB6100"
           @click="fanxing"
-          v-show="!foo"
+          v-show="list1.is_collect == 1"
         />
         <div>
           <p class="tad-p1">{{ list1.title }}</p>
@@ -45,7 +65,7 @@
           <p class="tad-p3">
             共{{ list1.course_type }}课时|{{ list1.browse_num }}人已报名
           </p>
-          <p class="tad-p3">
+          <p class="tad-p3" v-if="$route.query.courseType != 5">
             开课时间：{{ list1.end_play_date | timetow }} -
             {{ list1.enter_end_date | timetow }}
           </p>
@@ -56,54 +76,62 @@
       <div class="tad-tu">
         <p>教学团队</p>
         <ul>
-          <li>
-            <img :src="list1.cover_img" alt />
-            <font>{{ list1.course_statement }}</font>
+          <li
+            v-for="item in list"
+            :key="item.teacher_id"
+            @click="
+              token
+                ? $router.push(`/teacher?id=${item.teacher_id}`)
+                : $router.push('/login')
+            "
+          >
+            <img :src="item.avatar" alt />
+            <font>{{ item.teacher_name }}</font>
           </li>
         </ul>
       </div>
 
       <!-- 课程介绍 -->
-      <div class="tad-tu1" id="box1">
+      <div class="tad-tu1" id="box1" ref="jie">
         <p>课程介绍</p>
+        <div v-html="list1.course_details"></div>
       </div>
 
       <!-- 课程大纲 -->
-      <div class="tad-tu2">
+      <div class="tad-tu2" ref="da">
         <p>课程大纲</p>
-        <div>
-          <div class="k00">
+        <div v-if="$route.query.courseType != 5">
+          <div
+            class="k00"
+            v-for="item in dagang"
+            :key="item.id"
+            @click="video(item.video_id)"
+          >
             <div class="k0">
               <div class="k1"></div>
               <div class="k2">回放</div>
-              <span>第一次讲第一课时</span>
+              <span>{{ item.periods_title }}</span>
             </div>
+            <p class="k3">
+              {{ item.teachers[0].teacher_name }}
+              <span>{{ item.start_play }}{{ item.end_play }}</span>
+            </p>
           </div>
-          <p class="k3">
-            <span>李青</span>
-            <span>03月21日</span>
-            <span>18:00-19:00</span>
-          </p>
         </div>
-
-        <div>
-          <div class="k00">
-            <div class="k0">
-              <div class="k1"></div>
-              <div class="k2">回放</div>
-              <span>第一次讲第一课时</span>
-            </div>
+        <div v-if="$route.query.courseType == 5">
+          <div
+            class="k000"
+            v-for="item in dagang"
+            :key="item.id"
+            @click="video(item.video_id)"
+          >
+            <span>{{ item.periods_title }}</span>
           </div>
-          <p class="k3">
-            <span>李青</span>
-            <span>03月21日</span>
-            <span>18:00-19:00</span>
-          </p>
         </div>
       </div>
       <!-- 课程评论 -->
 
-      <div class="tad-tu2 tu3">
+      <div class="tad-tu2 tu3" ref="ping">
         <p>课程评论</p>
         <ul v-for="(item, index) in list3" :key="index">
           <li>
@@ -112,18 +140,20 @@
               <div>
                 <div>
                   <span>{{ item.nickname }}</span>
-                  <span>
-                    <span></span>
-                    <van-icon name="star" color="#EA7A2F" />
-                    <van-icon name="star" color="#EA7A2F" />
-                    <van-icon name="star" color="#EA7A2F" />
-                    <van-icon name="star" color="#EA7A2F" />
-                  </span>
+                  <div class="rate">
+                    <van-rate
+                      v-model="item.grade"
+                      readonly
+                      size=".28rem"
+                      color="rgb(234, 122, 47)"
+                      void-color=""
+                    />
+                  </div>
                   <span>{{ Number(item.created_at) | timetesev }}</span>
                 </div>
                 <!-- <p>风格的</p> -->
                 <div>
-                  <span>{{ item.content }}</span>
+                  <font>{{ item.content }}</font>
                 </div>
               </div>
             </div>
@@ -132,33 +162,63 @@
       </div>
     </div>
 
-    <div class="tad-bt" @click="xuexi()">立即学习</div>
+    <div class="tad-bt" v-show="list1.is_buy == 0" @click="baoming()">
+      立即报名
+    </div>
+    <div class="tad-bt" v-show="list1.is_buy == 1" @click="xuexi()">
+      立即学习
+    </div>
+
+    <!-- 分享 -->
+
+    <van-overlay :show="show" @click="show = false">
+      <div class="wrapper" @click="show = false">
+        <div class="block">
+          <p>分享</p>
+          <div id="qrCode" ref="qrCodeDiv"></div>
+        </div>
+      </div>
+    </van-overlay>
   </div>
 </template>
 
 <script>
-import { gets, posts } from "../util/api";
+import { Dialog, Toast } from "vant";
+import {
+  gets,
+  posts,
+  getCollect,
+  getColl,
+  getOrder,
+  getCourseChapter,
+  getVideo,
+} from "../util/api";
 export default {
   data() {
     return {
+      token: localStorage.getItem("token") || "",
       indexList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       //  页面滚动
-      top: "",
+      top: 0,
       flog: false,
       fll: true,
       foo: true,
       id: this.$route.query.id,
-
       // 基本数据
-      list: [],
-      list1: [],
+      list: {},
+      list1: {},
       list3: [],
+      show: false,
+      dagang: [],
     };
   },
   name: "demo",
   props: {},
   mounted() {
-    this.fun();
+    // 二维码
+    this.bindQRCode();
+
+    // this.fun();
     this.fun1();
     this.fun2();
     window.addEventListener("scroll", this.scrollHandle); // 绑定页面的滚动事
@@ -167,19 +227,58 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    // 获取数据
-    async fun() {
-      let { data } = await gets(`courseInfo/basis_id=${this.$route.query.id}`);
-      this.list = data.data;
-      console.log(this.list);
+    async video(id) {
+      if (this.token) {
+        if (this.list1.is_buy == 0) {
+          Toast("请先报名");
+        } else {
+          let { data } = await getVideo({ id: this.id, video_id: id });
+          console.log(data);
+          if (data.data.length == 0) {
+            Toast("暂未生成回放");
+          } else {
+            window.location.href = `https://wap.365msmk.com/video?video_id=${id}&id=${this.id}`;
+          }
+        }
+      } else {
+        this.$router.push("/login");
+      }
     },
+    // 立即报名
+    async baoming() {
+      if (!this.token) {
+        this.$router.push("/login");
+      }
+      let { data } = await getOrder({ shop_id: this.id, type: 5 });
+      console.log(data);
+      Toast(data.data.msg)
+      this.fun1();
+    },
+    // 二维码
+    bindQRCode() {
+      new this.$qrCode(this.$refs.qrCodeDiv, {
+        text: `https://wap.365msmk.com/course-detail?id=${this.id}&courseType=5`,
+        width: 200,
+        height: 200,
+        colorDark: "#333333", //二维码颜色
+        colorLight: "#ffffff", //二维码背景色
+        correctLevel: this.$qrCode.CorrectLevel.L, //容错率，L/M/H
+      });
+    },
+    // 获取数据
+    // async fun() {
+    //   let { data } = await gets(`courseInfo/basis_id=${this.$route.query.id}`);
+    //   console.log(this.list);
+    // },
     // 课程
     async fun1() {
       let { data } = await gets(`courseInfo/basis_id=${this.$route.query.id}`);
+      this.list = data.data.teachers;
+      console.log(this.list);
       this.list1 = data.data.info;
-      console.log(this.list1);
+      // console.log(this.list1);
     },
-    // 大纲
+    // 评论/大纲
     async fun2() {
       let { data } = await posts("courseComment", {
         page: 1,
@@ -187,30 +286,28 @@ export default {
         id: this.id,
       });
       this.list3 = data.data.list;
-      // console.log(data);
       // console.log(this.list3);
+      let { data: res } = await getCourseChapter({ id: this.id });
+      this.dagang = res.data;
+      console.log(this.dagang);
     },
 
     // 收藏
     async xing() {
       this.foo = false;
-      // let { data } = await this.$http.post('/api/app/collect',{
-      //   params:{
-      //     course_basis_id:this.$route.query.id,
-      //     type: 1
-      //   }
-      // })
-      // console.log(data)
+      let { data: res } = await getCollect({
+        course_basis_id: this.id,
+        type: 1,
+      });
+      Toast.success("已收藏");
+      this.fun1();
     },
     // 取消收藏
-    fanxing() {
+    async fanxing() {
       this.foo = true;
-      //  let { data } = await this.$http.post('/api/app/collect/cancel/227/1',{
-      //   // params:{
-      //   //   collect_id:
-      //   // }
-      // })
-      // console.log(data)
+      let { data: res } = await getColl(this.list1.collect_id);
+      Toast.success("已取消");
+      this.fun1();
     },
 
     // 返回路由
@@ -230,24 +327,52 @@ export default {
     },
 
     jie() {
-      document.body.scrollTop = document.documentElement.scrollTop = 650;
+      document.body.scrollTop = document.documentElement.scrollTop =
+        this.$refs.jie.offsetTop - 60;
     },
     da() {
-      document.body.scrollTop = document.documentElement.scrollTop = 800;
+      console.log(this.$refs.da.offsetTop - 60);
+      document.body.scrollTop = document.documentElement.scrollTop =
+        this.$refs.da.offsetTop - 60;
     },
     ping() {
-      document.body.scrollTop = document.documentElement.scrollTop = 1270;
+      console.log(this.$refs.ping.offsetTop - 60);
+      document.body.scrollTop = document.documentElement.scrollTop =
+        this.$refs.ping.offsetTop - 60;
     },
 
     // 学习页面跳转
     xuexi() {
-      this.$router.push("/study-detail");
+      this.$router.push("/study-detail?id=" + this.id);
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
+.k000 {
+  position: relative;
+  padding-left: 8vw;
+  line-height: 8vw;
+  font-size: 3.2vw;
+  font-family: PingFangSC-Regular;
+  font-weight: 400;
+  color: #595959;
+}
+.k000 :after {
+  content: "";
+  position: absolute;
+  left: 4.53333vw;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.06667vw;
+  height: 1.06667vw;
+  border-radius: 50%;
+  background: #eb6100;
+}
+.cxy_box {
+  transition: all 0.5s;
+}
 .xiangqing {
   position: relative;
 }
@@ -289,6 +414,7 @@ export default {
   color: #595959;
   width: 2rem;
   padding-left: 0.3rem;
+  color: #8c8c8c;
 }
 
 .tad-box {
@@ -301,6 +427,9 @@ export default {
   padding: 0 0.28rem;
   margin-bottom: 0.3rem;
   position: relative;
+  div {
+    padding: 4vw 0;
+  }
 }
 .tad-dan .van-icon {
   position: absolute;
@@ -308,12 +437,14 @@ export default {
   right: 0.4rem;
 }
 .tad-dan .tad-p1 {
-  font-size: 0.3rem;
   color: #333;
-  padding-top: 0.3rem;
   margin: 0;
-  height: 0.6rem;
-  line-height: 0.6rem;
+  font-size: 4.26667vw;
+  font-family: PingFangSC-Medium;
+  font-weight: 400;
+  color: #333;
+  padding-right: 10.66667vw;
+  line-height: 6.13333vw;
 }
 .tad-p2 {
   color: #eb6100;
@@ -335,7 +466,7 @@ export default {
 }
 
 .tad-tu {
-  height: 2.89rem;
+  height: 2.3rem;
   background-color: #fff;
   padding: 0.1rem 0.2rem;
 }
@@ -368,13 +499,14 @@ export default {
   flex-wrap: wrap;
 }
 .tad-tu li {
-  width: 1.42rem;
+  width: 20%;
   height: 1.8rem;
   padding: 0.15rem 0;
   display: flex;
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
+  text-align: center;
 }
 .tad-tu img {
   width: 0.78rem;
@@ -382,6 +514,8 @@ export default {
   border-radius: 50%;
 }
 .tad-tu font {
+  display: inline-block;
+  width: 100%;
   font-size: 0.24rem;
   color: rgba(0, 0, 0, 0.45);
   padding: 0.06rem 0.16rem;
@@ -393,15 +527,14 @@ export default {
 .tad-tu2 {
   margin-top: 0.3rem;
   background: #fff;
-  padding: 0.1rem 0.2rem;
-  // margin-bottom: 0.78rem;
+  padding: 0.3rem 0.2rem;
   ul {
     width: 7.07rem;
     li {
       width: 6.67rem;
       height: 0.86rem;
       padding: 0.2rem;
-      div {
+      > div {
         display: flex;
         justify-content: start;
         img {
@@ -409,7 +542,7 @@ export default {
           height: 0.5rem;
           border-radius: 50%;
         }
-        div {
+        > div {
           margin-left: 0.2rem;
           width: 6.17rem;
           height: 0.86rem;
@@ -417,11 +550,24 @@ export default {
           flex-wrap: wrap;
           // flex-direction: row-reverse;
           justify-content: start;
-          div {
+          > div {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 6.17rem;
             height: 0.3rem;
+            .rate {
+              width: 2.5rem;
+              height: 4vw;
+            }
+            font {
+              padding-top: 1.33333vw;
+              line-height: 6.4vw;
+              color: #999;
+              font-size: 3.2vw;
+              font-family: PingFangSC-Regular;
+              font-weight: 400;
+            }
           }
         }
       }
@@ -457,7 +603,7 @@ export default {
     margin-right: 0.2rem;
   }
   span {
-    font-size: 0.3rem;
+    font-size: 3.2vw;
     color: #595959;
   }
   .k3 {
@@ -465,14 +611,47 @@ export default {
     margin: 0;
     margin-left: 0.5rem;
     margin-bottom: 0.1rem;
+    font-family: PingFangSC-Regular;
+    font-weight: 400;
+    color: #8c8c8c;
+    span {
+      padding-left: 2.66667vw;
+    }
   }
 }
 .tad-tu2 p {
   width: 7.1rem;
   height: 0.5rem;
   margin: 0;
-  margin-top: 0.2rem;
   font-size: 0.3rem;
 }
 //  <!-- 课程评论 -->
+
+// 分享
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.block {
+  width: 70%;
+  height: 40%;
+  border-radius: 2.66667vw;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  p {
+    line-height: 1rem;
+    font-size: 0.19rem;
+  }
+  div {
+    margin-bottom: 0.2rem;
+    img {
+      width: 100%;
+    }
+  }
+}
 </style>

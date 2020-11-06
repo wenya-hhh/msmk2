@@ -11,17 +11,24 @@
     </header>
     <div class="cxy_base">
       <div>
-        <img :src="list.avatar" alt="" />
+        <img :src="list.teacher.avatar" alt="" />
         <div class="tea_title">
-          <p>{{ list.real_name }}</p>
+          <p>{{ list.teacher.real_name }}</p>
         </div>
         <div>
-          <van-button round type="info">关注</van-button>
+          <van-button round type="info" @click="guanzhu" v-show="list.flag == 2"
+            >关注</van-button
+          >
+          <span v-show="list.flag !=2" @click="guanzhu">已关注</span>
         </div>
       </div>
     </div>
     <div class="cxy_nav">
-      <van-tabs v-model="activeName" title-active-color="#eb6100">
+      <van-tabs
+        v-model="activeName"
+        title-active-color="#eb6100"
+        @click="getMa"
+      >
         <van-tab title="讲师介绍" name="a">
           <el-row>
             <el-col :span="7">教学年龄</el-col>
@@ -43,42 +50,28 @@
         </van-tab>
         <van-tab title="主讲课程" name="b">
           <el-card>
-            <div @click="$router.push('/course-detail')">
-              <p>每时每课特级教师-自主招生冲刺讲座10-二次函数4--存在性问题</p>
+            <div
+              @click="
+                $router.push('/course-detail?id=' + item.id + '&courseType=5')
+              "
+              v-for="item in main"
+              :key="item.id"
+            >
+              <p>{{ item.title }}</p>
               <span>共1课时</span>
               <div class="cxy_cen">
-                <img
-                  src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/2019X3gWvILU7J1571983543.png"
-                  alt=""
-                />
-                <span>杨德胜</span>
+                <img :src="item.teachers_list[0].teacher_avatar" alt="" />
+                <span>{{ item.teachers_list[0].teacher_name }}</span>
               </div>
               <div class="cxy_fot">
-                <p>45人已报名</p>
-                <span>免费</span>
-              </div>
-            </div>
-            <div>
-              <p>每时每课特级教师-自主招生冲刺讲座10-二次函数4--存在性问题</p>
-              <span>共1课时</span>
-              <div class="cxy_cen">
-                <img
-                  src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/2019X3gWvILU7J1571983543.png"
-                  alt=""
-                />
-                <span>杨德胜</span>
-              </div>
-              <div class="cxy_fot">
-                <p>45人已报名</p>
-                <p>免费</p>
+                <p>{{ item.sales_num }}人已报名</p>
+                <span v-if="item.price == 0">免费</span>
               </div>
             </div>
           </el-card>
-          <!-- <el-card>
-          </el-card> -->
         </van-tab>
-        <van-tab class="cxy_three" title="学院评价" name="c">
-          <el-card>
+        <van-tab class="cxy_three" title="学员评价" name="c">
+          <el-card v-if="read.length == 0">
             <img src="https://wap.365msmk.com/img/empty.0d284c2e.png" alt="" />
             <p>暂无评价</p>
           </el-card>
@@ -94,7 +87,15 @@
 </template>
 
 <script>
-import { gets, getTea, getTeaInfo } from "../util/api";
+import { Toast } from "vant";
+import {
+  gets,
+  getTea,
+  getTeaInfo,
+  getMain,
+  getComment,
+  getCollects,
+} from "../util/api";
 export default {
   // 组件名称
   name: "demo",
@@ -107,6 +108,9 @@ export default {
     return {
       activeName: "a",
       list: {},
+      teacher_id: this.$route.query.id,
+      main: [],
+      read: [],
     };
   },
   // 计算属性
@@ -115,14 +119,56 @@ export default {
   watch: {},
   async mounted() {
     // console.log(this.$route.query.id)
-    let { data } = await getTea(this.$route.query.id);
-    this.list = data.data.teacher;
-    console.log(this.list);
-    let { data: res } = await getTeaInfo(this.$route.query.id);
-    console.log(res);
+    this.getList();
   },
   // 组件方法
-  methods: {},
+  methods: {
+    async getList() {
+      // 讲师详情
+      let { data } = await getTea(this.teacher_id);
+      this.list = data.data;
+      console.log(this.list);
+      let { data: res } = await getTeaInfo(this.teacher_id);
+      // 讲师介绍
+      let { data: datas } = await getTeaInfo({
+        limit: 10,
+        page: 1,
+        teacher_id: this.teacher_id,
+      });
+      this.main = datas.data.attr;
+    },
+    // 关注
+    async guanzhu() {
+      let { data } = await getCollects(this.teacher_id);
+      this.getList();
+      if (data.data.flag == 1) {
+        Toast.success("已取消");
+      } else {
+        Toast.success("已关注");
+      }
+    },
+    // // 取消关注
+    // async quguan(){
+    //   // let {data} = await
+    // },
+    // 主讲课程
+    async getMa() {
+      let { data } = await getMain({
+        limit: 10,
+        page: 1,
+        teacher_id: this.teacher_id,
+      });
+      this.main = data.data.list;
+      console.log(this.main);
+      // 学员评价
+      let { data: res } = await getComment({
+        limit: 10,
+        page: 1,
+        teacher_id: this.teacher_id,
+      });
+      // this.read = read.data.tag;
+    },
+  },
 };
 </script>  
 <style scoped lang="scss">
@@ -180,6 +226,10 @@ header {
       color: #eb6100;
       background: #ebeefe;
       border: 0;
+    }
+    span {
+      font-size: 4vw;
+      color: #b7b7b7;
     }
   }
   .tea_title {
@@ -266,10 +316,10 @@ header {
     height: 3rem;
     border-radius: 0;
   }
-  p{
-        font-size: .4rem;
+  p {
+    font-size: 0.4rem;
     color: #8c8c8c;
-    margin-top: .2rem;
+    margin-top: 0.2rem;
   }
 }
 .el-row {

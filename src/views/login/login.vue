@@ -124,7 +124,8 @@ export default {
       console.log(data)
       if (data.msg == "操作成功") {
         localStorage.setItem("token", data.data.remember_token);
-        this.$router.push("/person");
+        this.$router.go(-1)
+        // this.$router.push("/person");
       } else {
         Toast("密码或者手机号有误");
       }

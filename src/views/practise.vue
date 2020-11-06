@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="box">
     <header>
       <h3>练习</h3>
     </header>
@@ -93,7 +93,7 @@
         <p>默认排序</p>
         <p>时间</p>
       </div>
-      <div>
+      <div class="empty">
         <img src="https://wap.365msmk.com/img/empty@2x.a2fa524d.png" alt="" />
         <p>暂无模考安排，敬请期待</p>
       </div>
@@ -135,13 +135,19 @@ export default {
 </script> 
 
 <style scoped lang="scss">
+.box {
+  background: #f0f2f5;
+  height: 100%;
+}
 header,
 h3 {
+  background: #fff;
   text-align: center;
   height: 0.88rem;
   line-height: 0.88rem;
   font-size: 0.4rem;
   color: #595959;
+  font-weight: 400;
 }
 
 .van-grid-item {
@@ -174,6 +180,11 @@ h3 {
 .bot {
   padding: 0.2rem;
   background-color: #fff;
+  > p {
+    font-size: 4vw;
+    color: #8c8c8c;
+    margin-bottom: 3.86667vw;
+  }
   img {
     width: 1.7rem;
     height: 2.3rem;
@@ -181,10 +192,25 @@ h3 {
   :nth-child(2) {
     display: flex;
     justify-content: space-between;
+    :nth-child(1) {
+      color: #eb6100;
+    }
+    :nth-child(2) {
+      color: #8c8c8c;
+    }
   }
-  :nth-child(3) {
-    text-align: center;
+  .empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+img {
+      width: 23.46667vw;
+      margin-bottom: 4vw;
+    }
     p {
+      font-size: 3.2vw;
+      color: #8c8c8c;
       text-align: center;
     }
   }

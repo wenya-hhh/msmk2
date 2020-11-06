@@ -170,6 +170,7 @@ export default {
   justify-content: center;
   height: 100%;
   z-index: 2222;
+  width: 100%;
 }
 
 .block {
