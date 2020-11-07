@@ -1,15 +1,13 @@
 <template>
   <div calss="zqd">
     <van-overlay :show="zqd_show1" @click="zqd_show1 = false">
-      <div class="wrapper" @click.stop='zqd_show1=false'>
+      <div class="wrapper" @click.stop="zqd_show1 = false">
         <div class="block">
-          <div class="zqd_aa">
-            <img
-              src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/2020ZOIaYY0vYI1603938429.png"
-              alt=""
-              class="zqd_img1"
-            />
-          </div>
+          <img
+            src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/2020ZOIaYY0vYI1603938429.png"
+            alt=""
+            class="zqd_img1"
+          />
         </div>
       </div>
     </van-overlay>
@@ -305,20 +303,6 @@ export default {
 .zqd {
   position: relative;
 }
-/* 隐藏的图片 */
-.zqd_img1 {
-  position: absolute;
-  width: 6.7rem;
-  height: 11rem;
-  margin-left: 0.4rem;
-  margin-top: 0.4rem;
-  z-index: 1000;
-}
-.zqd_aa {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-}
 
 /* 背景布局 */
 .zqd_bei {
@@ -466,6 +450,10 @@ export default {
   flex-direction: column;
   justify-content: center;
   /* align-items: center; */
+  p {
+    font-size: 3.2vw;
+    color: #fff;
+  }
 }
 
 /* 课程相关  样式 */
@@ -516,16 +504,21 @@ export default {
 .zqd_kong {
   height: 1rem;
 }
- .wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 
-  .block {
+.block {
+  width: 90%;
+  background-color: #fff;
+  /* 隐藏的图片 */
+    margin-top: -0.8rem;
+  img {
     width: 100%;
-    height: 100%;
-    background-color: #fff;
+    vertical-align: top;
   }
+}
 </style>

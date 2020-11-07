@@ -251,7 +251,7 @@ export default {
       }
       let { data } = await getOrder({ shop_id: this.id, type: 5 });
       console.log(data);
-      Toast(data.data.msg)
+      Toast('报名成功')
       this.fun1();
     },
     // 二维码

@@ -169,7 +169,7 @@ export default {
 }
 //最外层盒子
 .cxy_box {
-  width: 100%;
+  min-width: 100%;
   // main-height: 100%;
   background-color: #f0f2f5;
 }
@@ -262,6 +262,9 @@ export default {
       }
     }
   }
+}
+.content{
+  padding-bottom: 1.2rem;
 }
 // 精品课程样式
 .cxy_jingpin {

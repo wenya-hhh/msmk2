@@ -19,10 +19,10 @@
       <van-dropdown-menu active-color="#EF8133">
         <van-dropdown-item title="分类" ref="item">
           <div class="tad-yi">
-            <p class="tad-nian">年级</p>
             <div class="tad-he">
+              <p class="tad-nian">{{ attrclassify.name }}</p>
               <span
-                v-for="(ao, dong) in attrclassify[0].child"
+                v-for="(ao, dong) in attrclassify.child"
                 :key="dong"
                 @click="ke(ao.id)"
                 :class="ao.id === fen ? 'tad-he1' : ''"
@@ -30,10 +30,10 @@
               >
             </div>
 
-            <p class="tad-nian">学科</p>
             <div class="tad-he">
+              <p class="tad-nian">{{ attrclassify1.name }}</p>
               <span
-                v-for="(ao, dong) in attrclassify[1].child"
+                v-for="(ao, dong) in attrclassify1.child"
                 :key="dong"
                 @click="ke1(ao.id)"
                 :class="ao.id === fen1 ? 'tad-he1' : ''"
@@ -78,9 +78,9 @@
               <span
                 v-for="(item, index) in fenlei"
                 :key="index"
-                @click="sai(item.type)"
-                :class="item.type === flog ? 'tad-he1' : ''"
-                >{{ item.value }}</span
+                @click="sai(item.id)"
+                :class="item.id === flog ? 'tad-he1' : ''"
+                >{{ item.name }}</span
               >
             </div>
           </div>
@@ -91,14 +91,15 @@
     <!-- 粘性布局 -->
 
     <!-- 内容 -->
-    <!-- 加载更多 -->
-    <van-list
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
-    >
-      <div class="tad-nei">
+
+    <div class="tad-nei">
+      <!-- 加载更多 -->
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
         <div
           class="tad-dan"
           v-for="(item, index) in list"
@@ -110,16 +111,16 @@
             <p>
               <van-icon name="aim" />
               {{ item.end_play_date | timefnxq }}
-              |
+              <van-icon name="down" />
             </p>
-            <p>共{{ item.total_periods }}课时</p>
+            <p>共{{ item.course_type }}课时</p>
           </div>
           <div class="tad-tu">
             <div>
               <img :src="item.teachers_list[0].teacher_avatar" alt="" />
               <font>{{ item.teachers_list[0].teacher_name }}</font>
             </div>
-            <div v-if="item.total_periods == 1">
+            <div v-if="item.has_buy != 0">
               <img
                 src="../../public/img/5abe16aff492e007ed6de49a347364fb_03.jpg"
                 alt=""
@@ -128,7 +129,7 @@
             </div>
           </div>
           <p class="tad-ren">
-            <span>{{ item.sales_num }}人已报名</span>
+            <span>{{ item.brows_num }}人已报名</span>
 
             <font v-if="item.price == 0" class="mf">免费</font>
             <font v-if="item.price != 0" class="fk">
@@ -139,19 +140,10 @@
               {{ item.price / 100 + ".00" }}</font
             >
           </p>
-          <div class="cxy_pos">
-            <img
-              src="https://wap.365msmk.com/img/has-buy.6cfbd83d.png"
-              alt=""
-              v-show="item.has_buy"
-            />
-          </div>
         </div>
-      </div>
-    </van-list>
-    <!-- 加载更多 -->
-    <!-- </van-list> -->
-    <!-- 加载更多 -->
+      </van-list>
+      <!-- 加载更多 -->
+    </div>
     <Footer></Footer>
   </div>
 </template>
@@ -167,93 +159,32 @@ export default {
       value: 0,
       switch1: false,
       switch2: false,
+
       // 加载更多
       loading: false,
       finished: false,
+      i: 2,
+
       // 基本数据
       list: [],
-      fenlei: [
-        { type: 0, value: "全部" },
-        { type: 2, value: "大班课" },
-        { type: 3, value: "小班课" },
-        { type: 4, value: "公开课" },
-        { type: 5, value: "点播课" },
-        { type: 7, value: "面授课" },
-        { type: 8, value: "音频课" },
-        { type: 9, value: "系统课" },
-        { type: 10, value: "图文课" },
-        { type: 11, value: "会员课" },
-      ],
+      list2: [],
+      fenlei: [],
       fll: 0,
       flog: 0,
       fen: "",
       fen1: "",
-      attrclassify: [
-        {
-          id: 1,
-          name: "年级",
-          parent_id: 0,
-          child: [
-            {
-              id: 1,
-              name: "初一",
-            },
-            {
-              id: 2,
-              name: "初二",
-            },
-            {
-              id: 3,
-              name: "初三",
-            },
-            {
-              id: 4,
-              name: "高一",
-            },
-            {
-              id: 5,
-              name: "高二",
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: "学科",
-          parent_id: 0,
-          child: [
-            {
-              id: 7,
-              name: "语文",
-            },
-            {
-              id: 8,
-              name: "数学",
-            },
-            {
-              id: 9,
-              name: "英语",
-            },
-            {
-              id: 12,
-              name: "物理",
-            },
-            {
-              id: 13,
-              name: "化学",
-            },
-          ],
-        },
-      ],
-      total: 0,
-      page: 1,
+
+      attrclassify: [],
+      attrclassify1: [],
     };
   },
 
   name: "demo",
   props: {},
   mounted() {
-    this.fun(this.page);
-    // this.fun1();
+    this.fun();
+    this.fun1();
+    this.fenshu();
   },
 
   // 计算属性
@@ -264,20 +195,33 @@ export default {
   watch: {},
   methods: {
     // 获取数据
-    async fun(page) {
-      console.log(page);
-      let { data } = await this.$http.get(`courseBasis?page=${page}&limit=10`);
-      this.list = [...data.data.list];
-      this.total = data.data.total;
-      // console.log(data);
-      // console.log(this.list);
+    async fun() {
+      let { data } = await this.$http.get("courseBasis?page=1&limit=32&");
+      // console.log(data)
+      this.list2 = data.data.list;
+      for (let i = 0; i < 4; i++) {
+        this.list.push(this.list2[i]);
+      }
+      // console.log(this.list)
+      // console.log(this.list2)
     },
-    // async fun1() {
-    //   let { data } = await this.$http.get("courseClassify");
-    //   console.log(data);
-    //   this.fenlei = data.data.attrclassify;
-    //   console.log(this.fenlei);
-    // },
+
+    // 筛选数据
+    async fun1() {
+      let { data } = await this.$http.get(
+        "http://120.53.31.103:84/api/app/courseClassify"
+      );
+      this.fenlei = data.data.appCourseType;
+      // console.log(this.fenlei)
+    },
+
+    // 分类数据获取
+    async fenshu() {
+      let { data } = await this.$http.get("courseClassify?");
+      this.attrclassify = data.data.attrclassify[0];
+      this.attrclassify1 = data.data.attrclassify[1];
+      //  console.log(this.attrclassify1)
+    },
 
     // 搜索按钮
     onClickRight() {
@@ -291,24 +235,21 @@ export default {
 
     // 详情页面跳转
     danxiang(i) {
-      console.log(i);
+      // console.log(i)
       this.$router.push({
         path: "/Course-detail",
-        query: { id: i ,courseType:3},
+        query: { id: i,courseType:3 },
       });
     },
 
     // 排序
     async onConfirm(i) {
       this.fll = i;
-      let { data } = await this.$http.get(
-        "courseBasis?page=1&limit=10&",
-        {
-          params: {
-            order_by: i,
-          },
-        }
-      );
+      let { data } = await this.$http.get("courseBasis?page=1&limit=10&", {
+        params: {
+          order_by: i,
+        },
+      });
       this.list = data.data.list;
       this.$refs.item1.toggle();
     },
@@ -317,16 +258,14 @@ export default {
     async sai(i) {
       this.flog = i;
       this.$refs.item2.toggle();
-      let { data } = await this.$http.get(
-        "courseBasis?page=1&limit=10&",
-        {
-          params: {
-            course_type: i,
-          },
-        }
-      );
+      let { data } = await this.$http.get("courseBasis?page=1&limit=10&", {
+        params: {
+          course_type: i,
+        },
+      });
+      // console.log(data)
       this.list = data.data.list;
-      console.log(this.list);
+      // console.log(this.list)
     },
 
     // 分类
@@ -336,9 +275,15 @@ export default {
     ke1(i) {
       this.fen1 = i;
     },
-    queding() {
+    async queding() {
+      let { data } = await this.$http.get(
+        `courseBasis?page=1&limit=10&course_type=0&classify_id=&order_by=&attr_val_id=${this.fen1},${this.fen}&is_vip=0&`
+      );
+      //  console.log(data)
+      this.list = data.data.list;
       this.$refs.item.toggle();
     },
+
     chong() {
       this.fen = "";
       this.fen1 = "";
@@ -349,25 +294,25 @@ export default {
     onLoad() {
       // 异步更新数据
       // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      // setTimeout(() => {
-      //   for (let i = 0; i < 2; i++) {
-      //     this.i++;
-      //     this.list2.push(this.list[this.i]);
-      //   }
-      //   // 加载状态结束
-      //   // 数据全部加载完成
-      // }, 2000);
-      this.fun(this.page++);
-      this.loading = false;
-      if (this.list.length == this.total) {
-        this.finished = true;
-      }
+      setTimeout(() => {
+        for (let i = 0; i < 4; i++) {
+          this.i++;
+          this.list.push(this.list2[this.i]);
+        }
+        // console.log(this.list)
+        // 加载状态结束
+        this.loading = false;
+        // 数据全部加载完成
+        if (this.list.length >= this.list2.length) {
+          this.finished = true;
+        }
+      }, 2000);
     },
   },
 };
 </script>
 
-<style lang='scss' scoped>
+<style scoped>
 .van-nav-bar {
   height: 0.87rem;
 }
@@ -462,16 +407,6 @@ export default {
   margin-bottom: 0.3rem;
   position: relative;
 }
-/* 定位 */
-.cxy_pos {
-  position: absolute;
-  right: 0.5rem;
-  top: 25%;
-  img {
-    width: 1rem;
-    height: 1rem;
-  }
-}
 .tad-dan .tad-p1 {
   font-size: 0.3rem;
   color: #333;
@@ -481,13 +416,11 @@ export default {
 .tad-sj {
   display: flex;
   align-items: center;
-  font-size: 3.2vw;
-  font-family: PingFangSC-Regular;
-  font-weight: 400;
-  color: #666;
 }
 .tad-sj p {
-  margin: 0.2rem 0.2rem 0 0;
+  margin: 0;
+  margin-top: 0.2rem;
+  font-size: 0.25rem;
 }
 .tad-tu {
   width: 6.34rem;

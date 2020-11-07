@@ -116,9 +116,13 @@ export default {
         type: 1,
       });
       if (data.code == 200) {
-        this.show = false;
         this.$toast("评论成功");
+      } else {
+        this.$toast(data.msg);
       }
+      this.show = false;
+      this.value = 0;
+      this.neirong = '';
       console.log(data);
     },
     // 视频
