@@ -39,13 +39,17 @@ export let getClass = data => gets('module/attribute/1')
 export let getVideo = data => gets(`getPcRoomCode/course_id=${data.id}/chapter_id=${data.video_id}`)
 
 // 消息
-export const msgDetailAjax = data => posts(`message/getMessage`,data); // 消息
-export const messageAjax = data => posts(`message/classifyMessage`,data); // 消息
+export const msgDetailAjax = data => posts(`message/getMessage`, data); // 消息
+export const messageAjax = data => posts(`message/classifyMessage`, data); // 消息
 
 // 会员
-export const vipAjax = data => gets(`vip/grade`,data); // 会员
-export const downOrderAjax = data => posts(`order/downOrder`,data); // 充值
+export const vipAjax = data => gets(`vip/grade`, data); // 会员
+export const downOrderAjax = data => posts(`order/downOrder`, data); // 充值
 // 个人信息s
-export const AjaxInfo = data => gets("userInfo", data); // 个人信息
+export const AjaxInfo = data => gets("userInfo", data); // 个人信息
 
 
+// 讲师评价
+export function teacherComment(params) {
+    return request.post("teacher/comment", params)
+}

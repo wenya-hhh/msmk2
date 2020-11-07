@@ -1,14 +1,18 @@
 <template>
   <div calss="zqd">
-    <div class="zqd_aa">
-      <img
-        src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/2020ZOIaYY0vYI1603938429.png"
-        alt=""
-        class="zqd_img1"
-        v-show="zqd_show1"
-        @click="zqd_chulai"
-      />
-    </div>
+    <van-overlay :show="zqd_show1" @click="zqd_show1 = false">
+      <div class="wrapper" @click.stop='zqd_show1=false'>
+        <div class="block">
+          <div class="zqd_aa">
+            <img
+              src="https://msmk2019.oss-cn-shanghai.aliyuncs.com/uploads/image/2020ZOIaYY0vYI1603938429.png"
+              alt=""
+              class="zqd_img1"
+            />
+          </div>
+        </div>
+      </div>
+    </van-overlay>
 
     <div class="zqd_bei">
       <!-- 这个是后面的背景颜色 -->
@@ -17,7 +21,7 @@
     <div class="zqd_top">
       <!-- 上部分 -->
       <div class="zqd_shang">
-        <div class="img"  @click="zqd_ge">
+        <div class="img" @click="zqd_ge">
           <img :src="zqd_obj.avatar" class="zqd_img" alt="" />
           <img
             class="vip-logo"
@@ -287,9 +291,9 @@ export default {
       this.zqd_show1 = true;
     },
     //点击隐藏
-    zqd_chulai() {
-      this.zqd_show1 = false;
-    },
+    // zqd_chulai() {
+    //   this.zqd_show1 = false;
+    // },
   },
   components: {
     Foot,
@@ -480,7 +484,7 @@ export default {
 
 .zqd_ul > li {
   display: flex;
-  height:1.6rem;
+  height: 1.6rem;
   align-items: center;
   border-bottom: 1px solid #f4f4f4;
 }
@@ -512,4 +516,16 @@ export default {
 .zqd_kong {
   height: 1rem;
 }
+ .wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .block {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+  }
 </style>

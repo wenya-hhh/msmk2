@@ -281,11 +281,11 @@ export default {
       // 定位
       .cxy_pos {
         position: absolute;
-        right: 0.5rem;
-        top: 25%;
+        right: 0.3rem;
+        top: 28%;
         img {
-          width: 1rem;
-          height: 1rem;
+          width: 15.73333vw;
+          height: 12.8vw;
         }
       }
       .one {
@@ -318,13 +318,8 @@ export default {
         font-weight: 500;
         border-top: 1px solid #f5f5f5;
         padding: 0.2rem 0;
-        :last-child {
-          span {
-            img {
-              width: 0.24rem;
-              height: 0.24rem;
-            }
-          }
+        img {
+          width: 3.2vw;
         }
         .free {
           font-size: 0.32rem;

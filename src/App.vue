@@ -1,13 +1,14 @@
 <template>
   <div id="app">
     <router-view />
-    <frame />
+    <!-- <frame /> -->
     <loading  v-if="$store.state.isshow"></loading>
   </div>
 </template>
 <script>
 import frame from './components/Frame';
 import loading from './components/loading.vue';
+import mea from './util/meiqia'
 export default {
   components: { frame,loading },
   data() {
